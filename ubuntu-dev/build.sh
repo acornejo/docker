@@ -4,7 +4,7 @@ set -e
 cd "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 if [ $UID -eq 0 ]; then
-  echo "Error: running as root, pleas run as a regular user."
+  echo "Error: running as root, run as a regular user."
   exit 1
 fi
 
@@ -29,10 +29,11 @@ fi
 if ! id | grep docker >/dev/null; then
     echo "Error: $USER is not in the docker group." 
     echo
-    echo "  To add yourself to a docker group:"
+    echo " To add yourself to a docker group:"
     echo
     echo "   sudo usermod -a -G docker $USER"
     echo
+    echo " you must logout for the changes to take effect."
     exit 1
 fi
 
