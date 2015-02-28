@@ -1,8 +1,12 @@
-# Basic development docker image.
+# Basic development docker images
 
-This repository contains a basic ubuntu container for development (aka
-compiling). Specifically it includes the following:
+This repository contains a basic ubuntu containers for development (aka
+compiling). Specifically ubuntu-dev includes the following:
 
+- nano
+- vim
+- tmux
+- less
 - gcc
 - g++
 - make
@@ -14,6 +18,13 @@ compiling). Specifically it includes the following:
 To log into the container, the username is `dev` and the password is
 `dev`. If you drop a public key on the resources folder, the `dev` user
 will be configured to provide password less ssh access to the key owner.
+
+The `ubuntu-nvidia` and `ubuntu-ati` containers extend the basic
+container with the GLX extensions for either nvidia or ati to use
+graphic acceleration. These images must be built in a host that has an
+nvidia or ati card with the same version of the drivers installed on
+their system. The `build.sh` script should make this work as
+appropriate.
 
 # Getting started
 
