@@ -49,7 +49,7 @@ ADD resources/* /tmp/
 
 # create username
 RUN USERNAME=$(cat /tmp/image-user) && \
-   adduser $USERNAME --gecos "$USERNAME,,," --disabled-password 2>&1 >/dev/null && \
+  adduser $USERNAME --gecos "$USERNAME,,," --disabled-password 2>&1 >/dev/null && \
   echo "$USERNAME:$USERNAME" | chpasswd && \
   adduser $USERNAME sudo && \
   echo "$USERNAME ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/$USERNAME-sudo && \

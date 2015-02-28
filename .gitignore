@@ -1,0 +1,4 @@
+ubuntu-ati/resources/ati
+ubuntu-ati/resources/video-driver-install
+ubuntu-nvidia/resources/video-driver-pkg
+ubuntu-nvidia/resources/video-driver-install

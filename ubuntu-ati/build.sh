@@ -1,9 +1,10 @@
 #!/bin/bash
+set -e
 
 cd "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 if [ $UID -eq 0 ]; then
-  echo "Error: running as root, pleas run as a regular user."
+  echo "Error: running as root, run as a regular user."
   exit 1
 fi
 
@@ -28,10 +29,11 @@ fi
 if ! id | grep docker >/dev/null; then
     echo "Error: $USER is not in the docker group." 
     echo
-    echo "  To add yourself to a docker group:"
+    echo " To add yourself to a docker group:"
     echo
     echo "   sudo usermod -a -G docker $USER"
     echo
+    echo " you must logout for the changes to take effect."
     exit 1
 fi
 
@@ -42,12 +44,29 @@ fi
 
 IMAGE=$(cat resources/image-name)
 
-for f in resources/id_*; do
-    to="$HOME/.ssh/$(basename $f)"
-    if [ -e $f ] && [ ! -f $to ]; then
-        cp -v $f $to
-        chmod 600 $to
-    fi
+ati_version=$(dmesg | dmesg | awk '/fglrx.*module/ { print $8  }')
+
+if [ -z $ati_version ]; then
+    echo "Must be run on linux with ati hardware!"
+    exit 1
+fi
+
+current_ati_packages=$(dpkg -l | awk '/fglrx/ {print $2}')
+
+if [ -z "$current_ati_packages" ]; then
+    echo "Must have installed the fglrx-* ati packages locally."
+    exit 1
+fi
+
+if [ -z "$(ls -A resources/ati/*.deb 2>/dev/null)"  ]; then
+    apt-get -d --reinstall install $current_ati_packages
+    mkdir -p resources/ati
+    cp /var/cache/apt/archives/fglrx* resources/ati
+fi
+
+rm -f resources/video-driver-install
+for deb in resources/ati/*.deb; do
+    echo dpkg-deb -x /tmp/ati/$(basename $deb) / >> resources/video-driver-install
 done
 
 echo "building $IMAGE image ..."
