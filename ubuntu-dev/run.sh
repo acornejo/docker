@@ -47,7 +47,7 @@ fi
 IMAGE_NAME=$(cat resources/image-name)
 IMAGE_USER=$(cat resources/image-user)
 INSTANCE=$1
-CONTAINER="$IMAGE_NAME-$INSTANCE"
+CONTAINER="$(basename $IMAGE_NAME)-$INSTANCE"
 shift
 
 docker inspect --format="{{ .State.Running  }}" $CONTAINER > /dev/null 2>&1
