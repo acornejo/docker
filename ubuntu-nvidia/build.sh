@@ -64,7 +64,7 @@ if [ ! -f resources/video-driver-pkg  ]; then
 fi
 
 if [ ! -f resources/video-driver-install ]; then
-    echo $video_driver_run_cmd > resources/video-driver-install
+    echo "exec sh /tmp/video-driver-pkg -a -N --ui=none --no-kernel-module" > resources/video-driver-install
     chmod 755 resources/video-driver-install
 fi
 

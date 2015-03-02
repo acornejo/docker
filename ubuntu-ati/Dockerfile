@@ -8,7 +8,7 @@ RUN apt-get update && apt-get install -q -y --force-yes --no-install-recommends 
 ADD resources/ /tmp/
 
 # install video driver
-RUN test -f /tmp/video-driver-install && bash /tmp/video-driver-install || echo "*****ERROR***** skipped driver install"
+RUN bash /tmp/video-driver-install
 
 # clean up resources
 RUN rm -fr /tmp/*

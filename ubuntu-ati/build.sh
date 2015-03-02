@@ -44,7 +44,7 @@ fi
 
 IMAGE=$(cat resources/image-name)
 
-ati_version=$(dmesg | dmesg | awk '/fglrx.*module/ { print $8  }')
+ati_version=$(dmesg | awk '/fglrx.*module/ { print $8  }')
 
 if [ -z $ati_version ]; then
     echo "Must be run on linux with ati hardware!"
@@ -64,10 +64,12 @@ if [ -z "$(ls -A resources/ati/*.deb 2>/dev/null)"  ]; then
     cp /var/cache/apt/archives/fglrx* resources/ati
 fi
 
-rm -f resources/video-driver-install
-for deb in resources/ati/*.deb; do
-    echo dpkg-deb -x /tmp/ati/$(basename $deb) / >> resources/video-driver-install
-done
+if [ ! -f resources/video-driver-install ]; then
+    for deb in resources/ati/*.deb; do
+        echo dpkg-deb -x /tmp/ati/$(basename $deb) / >> resources/video-driver-install
+    done
+    chmod 755 resources/video-driver-install
+fi
 
 echo "building $IMAGE image ..."
 sudo docker build --rm=true -t $IMAGE $* .
