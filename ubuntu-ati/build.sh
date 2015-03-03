@@ -48,14 +48,14 @@ ati_version=$(dmesg | awk '/fglrx.*module/ { print $8  }')
 
 if [ -z $ati_version ]; then
     echo "Must be run on linux with ati hardware!"
-    exit 1
+    [ -n "$NO_ABORT" ] || exit 1
 fi
 
 current_ati_packages=$(dpkg -l | awk '/fglrx/ {print $2}')
 
 if [ -z "$current_ati_packages" ]; then
     echo "Must have installed the fglrx-* ati packages locally."
-    exit 1
+    [ -n "$NO_ABORT" ] || exit 1
 fi
 
 if [ -z "$(ls -A resources/ati/*.deb 2>/dev/null)"  ]; then
@@ -65,8 +65,16 @@ if [ -z "$(ls -A resources/ati/*.deb 2>/dev/null)"  ]; then
 fi
 
 if [ ! -f resources/video-driver-install ]; then
+    mkdir -p /tmp/deb-build
+    echo touch /tmp/do_not_build_dkms_module > resources/video-driver-install
     for deb in resources/ati/*.deb; do
+        rm -f /tmp/deb-build/*
+        dpkg-deb -e $deb /tmp/deb-build
         echo dpkg-deb -x /tmp/ati/$(basename $deb) / >> resources/video-driver-install
+        if [ -f /tmp/deb-build/postinst ]; then
+            cp /tmp/deb-build/postinst resources/ati/$(basename $deb .deb).postinst
+            echo bash /tmp/ati/$(basename $deb .deb).postinst configure >> resources/video-driver-install
+        fi
     done
     chmod 755 resources/video-driver-install
 fi
