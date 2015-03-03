@@ -60,10 +60,10 @@ if [ $? -ne 1  ]; then
 fi
 
 if [ "$#" -lt 1 ]; then
-    OPTS="-d"
+    OPTS="$OPTS -d"
     EXTRA_PARAMS="/usr/bin/startup.sh"
 else
-    OPTS="--rm=true -ti"
+    OPTS="$OPTS --rm=true -ti"
     EXTRA_PARAMS="$*"
 fi
 

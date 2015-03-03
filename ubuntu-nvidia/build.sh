@@ -48,7 +48,7 @@ nvidia_version=$(awk '/^NVRM/ { print $8 }' /proc/driver/nvidia/version)
 
 if [ -z $nvidia_version ]; then
     echo "Must be run on linux with nvidia hardware!"
-    exit 3
+    [ -n "$NO_ABORT" ] || exit 1
 else
     video_driver_uri=http://us.download.nvidia.com/XFree86/Linux-x86_64/${nvidia_version}/NVIDIA-Linux-x86_64-${nvidia_version}.run
     video_driver_run_cmd="exec sh /tmp/video-driver-pkg -a -N --ui=none --no-kernel-module"
@@ -56,7 +56,7 @@ fi
 
 if [ ! -f resources/video-driver-pkg  ]; then
     if ! hash curl >/dev/null; then
-        echo "Error: curl not found. Please install it first"
+        echo "Error: curl not found (required to download nvidia driver). Please install it first"
         echo
         exit 1
     fi
