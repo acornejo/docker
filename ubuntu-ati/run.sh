@@ -69,12 +69,11 @@ fi
 
 docker run $OPTS --name $CONTAINER $IMAGE_NAME $EXTRA_PARAMS
 
-if docker inspect --format '{{ .State.Running }}' $CONTAINER | grep false; then
-    echo "Error: starting container failed"
-    exit 1
-fi
-
 if [ "$#" -lt 1 ]; then
+    if docker inspect --format '{{ .State.Running }}' $CONTAINER | grep false; then
+        echo "Error: starting container failed"
+        exit 1
+    fi
     ssh-keygen -f "$HOME/.ssh/known_hosts" -R $(docker inspect --format '{{ .NetworkSettings.IPAddress }}' $CONTAINER) 2> /dev/null
     container_info $CONTAINER
 fi
