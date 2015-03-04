@@ -29,6 +29,14 @@ container_info() {
     echo
 }
 
+setup_xauth() {
+    XSOCK="/tmp/.X11-unix"
+    XAUTH="/tmp/.X11-auth-docker-$RANDOM"
+    touch $XAUTH
+    xauth nlist $DISPLAY | sed -e 's/^..../ffff/' | xauth -f $XAUTH nmerge -
+    OPTS="$OPTS -v $XSOCK:$XSOCK:rw -v $XAUTH:$XAUTH:rw -e DISPLAY=$DISPLAY -e XAUTHORITY:$XAUTH"
+}
+
 if [ "$#" -lt 1 ]; then
     usage
     exit 1
@@ -63,6 +71,7 @@ if [ "$#" -lt 1 ]; then
     OPTS="$OPTS -d"
     EXTRA_PARAMS="/usr/bin/startup.sh"
 else
+    [ -n "$DISPLAY" ] && setup_xauth
     OPTS="$OPTS --rm=true -ti"
     EXTRA_PARAMS="$*"
 fi
@@ -77,5 +86,7 @@ if [ "$#" -lt 1 ]; then
     ssh-keygen -f "$HOME/.ssh/known_hosts" -R $(docker inspect --format '{{ .NetworkSettings.IPAddress }}' $CONTAINER) 2> /dev/null
     container_info $CONTAINER
 fi
+
+[ -n "$XAUTH" ] && [ -f "$XAUTH" ] && rm -f $XAUTH
 
 exit 0
