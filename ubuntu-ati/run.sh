@@ -34,7 +34,7 @@ setup_xauth() {
     XAUTH="/tmp/.X11-auth-docker-$RANDOM"
     touch $XAUTH
     xauth nlist $DISPLAY | sed -e 's/^..../ffff/' | xauth -f $XAUTH nmerge -
-    OPTS="$OPTS -v $XSOCK:$XSOCK:rw -v $XAUTH:$XAUTH:rw -e DISPLAY=$DISPLAY -e XAUTHORITY:$XAUTH"
+    OPTS="$OPTS -v $XSOCK:$XSOCK:rw -v $XAUTH:$XAUTH:rw -e DISPLAY=$DISPLAY -e XAUTHORITY=$XAUTH"
 }
 
 if [ "$#" -lt 1 ]; then
